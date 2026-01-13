@@ -1,0 +1,19 @@
+.badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.baru {
+    background-color: gray;
+}
+
+.diproses {
+    background-color: yellow;
+}
+
+.selesai {
+    background-color: green;
+}
