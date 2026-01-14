@@ -67,5 +67,7 @@ $result = mysqli_query($conn, $query);
                 </tr>
             <?php } ?>
         </table>
+
+        <a href="export_excel.php">Export Excel</a>
     </body>
 </html>
