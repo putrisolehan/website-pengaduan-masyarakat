@@ -8,7 +8,26 @@ if (!isset($_SESSION['admin_login'])) {
 
 include '../config/database.php';
 
-$query = "SELECT * FROM pengaduan ORDER BY created_at DESC";
+$status = isset($_GET['status']) ? $_GET['status'] : '';
+$keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
+
+$query = "SELECT * FROM pengaduan";
+
+$conditions = [];
+
+if ($status != '') {
+    $conditions[] = "status = '$status'";
+}
+
+if ($keyword != '') {
+    $conditions[] = "(nama LIKE '%$keyword%' OR nik LIKE '%$keyword%')";
+}
+
+if (!empty($conditions)) {
+    $query .= " WHERE " . implode(" AND ", $conditions);
+}
+
+$query .= " ORDER BY created_at DESC";
 $result = mysqli_query($conn, $query);
 ?>
 
@@ -16,6 +35,11 @@ $result = mysqli_query($conn, $query);
     <head>
         <title>Dashboard Admin</title>
         <link rel="stylesheet" href="../assets/css/style.css">
+        <script>
+            function submitSearch() {
+                document.getElementById("searchForm").submit();
+            }
+        </script>
     </head>
     <body>
         <h2>Welcome <?= $_SESSION['admin_username']; ?></h2>
@@ -24,6 +48,26 @@ $result = mysqli_query($conn, $query);
         <hr>
 
         <h3>Daftar Pengaduan</h3>
+
+        <form method="GET" id="searchForm">
+            <input 
+                type="text" 
+                name="keyword" 
+                placeholder="Cari nama atau NIK"
+                value="<?= isset($_GET['keyword']) ? $_GET['keyword'] : '' ?>"
+                onkeyup="submitSearch()"
+            >
+        </form>
+
+        <form method="GET">
+            <select name="status" onchange="this.form.submit()">
+                <option value="">Filter Status</option>
+                <option value="baru" <?= (isset($_GET['status']) && $_GET['status'] == 'baru') ? 'selected' : '' ?>>Baru</option>
+                <option value="diproses" <?= (isset($_GET['status']) && $_GET['status'] == 'diproses') ? 'selected' : '' ?>>Diproses</option>
+                <option value="selesai" <?= (isset($_GET['status']) && $_GET['status'] == 'selesai') ? 'selected' : '' ?>>Selesai</option>
+            </select>
+        </form>
+        
 
         <table border="1" cellpadding="10" cellspacing="0">
             <tr>
